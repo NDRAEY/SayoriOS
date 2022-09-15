@@ -158,8 +158,10 @@ def build_all():
             print("[OKAY]")
         os.chdir("../..")
 
-    '''
+    build("compile", "examples/C/valera.c", "./bin/valera.o")
+    build("link", "./bin/valera.o extlibs/ValeraC/libvalera.lib "+O_LIBC, "../bin/apps/valera")
 
+    '''
     if BUILD_BASIC:
         print(("="*20)+"[Building BASIC]"+("="*20))
         os.chdir("basic-prog-lang");
