@@ -34,6 +34,7 @@ int valera_digit_count(int number)
     return digits;
 }
 
+/*
 int valera_value_string_size(valera_value_t *val) {
 	int size = 0;
 	if(val->type==VAL_NUM) {
@@ -49,7 +50,9 @@ int valera_value_string_size(valera_value_t *val) {
 	}
 	return size;
 }
+*/
 
+/*
 void valera_value_string(valera_value_t *val, char *string) {
 	if(val->type==VAL_NUM) {
 		sprintf(string, "%i", val->num);
@@ -69,7 +72,7 @@ void valera_value_string(valera_value_t *val, char *string) {
 		free(st);
 	}
 }
-
+*/
 valera_value_t *valera_value_new() {
 	valera_value_t *tmp = calloc(1, sizeof(valera_value_t));
 	VCHECKMEM(tmp);
@@ -176,6 +179,7 @@ valera_value_t *valera_array_get(valera_array_t *arr, int index) {
 	return arr->values[index];
 }
 
+/*
 int valera_array_string_size(valera_array_t *arr) {
 	int size = 2; // []
 
@@ -186,7 +190,9 @@ int valera_array_string_size(valera_array_t *arr) {
 	
 	return size;
 }
+*/
 
+/*
 void valera_array_string(valera_array_t *arr, char *string) {
 	int point = 0;
 	string[point++] = '[';
@@ -207,6 +213,7 @@ void valera_array_string(valera_array_t *arr, char *string) {
 	}
 	string[point++] = ']';
 }
+*/
 
 void valera_array_print(valera_array_t *arr) {
 	printf("[");
@@ -371,6 +378,7 @@ void valera_debug(valera_node_t *n) {
 	printf("Value: "); valera_value_print(n->value); puts("");
 }
 
+/*
 int valera_json_size(valera_node_t *obj) {
 	int size = 2; // {}
 
@@ -384,7 +392,8 @@ int valera_json_size(valera_node_t *obj) {
 	
 	return size;
 }
-
+*/
+/*
 void valera_json(valera_node_t *obj, char *str) {
 	int point = 0;
 	str[point++] = '{';
@@ -411,6 +420,7 @@ void valera_json(valera_node_t *obj, char *str) {
 	}
 	str[point++] = '}';
 }
+*/
 
 /* This function indicates how much memory the user should allocate */
 int valera_array_join_size(valera_array_t* array, char* sign) {

@@ -85,3 +85,12 @@ void *calloc(size_t number, size_t size) {
 	memset(allocated, 0, size*number);
 	return allocated;
 }
+
+void *realloc(void* memory, unsigned int value) {
+	printf("IMPLEMENT REALLOC FIRST!\n");
+	while(1) {}
+}
+
+void exit(unsigned int code) {
+	printf("SHOULD EXIT WITH CODE %d, BUT CAN'T!\n");
+}
