@@ -34,9 +34,16 @@ void tty_scroll();
 
 void tty_clear();
 
-static inline void tty_printf(char *text, ...) {
+static inline void tty_printf(const char *text, ...) {
     va_list args;
     va_start(args, text);
     tty_vprintf(text, args);
+    va_end(args);
+}
+
+static inline void _tty_printf(const char *text, ...) {
+    va_list args;
+    va_start(args, text);
+    _tty_vprintf(text, args);
     va_end(args);
 }

@@ -106,7 +106,7 @@ uint32_t dino_filemanager(int argc, char* argv[]) {
 		punch();
 	}
 
-	clean_tty_screen();
+	tty_clear();
 
 	keyboardctl(KEYBOARD_ECHO, true);
 

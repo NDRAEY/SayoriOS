@@ -27,8 +27,6 @@ size_t tty_current_height = 0;
 size_t tty_current_column = 0;
 size_t tty_current_row = 0;
 
-size_t tty_current_color = 0;
-
 uint32_t* tty_character_buffer = 0;
 uint32_t* tty_attributes_buffer = 0;
 
@@ -50,8 +48,6 @@ void tty_init(void) {
 
     tty_reset_position();
     tty_build_buffers();
-
-    tty_current_color = 0xffffff;
 }
 
 void tty_reset_position() {
@@ -60,8 +56,8 @@ void tty_reset_position() {
 }
 
 void tty_clear_buffers() {
-    memset(tty_character_buffer, 0, tty_current_width * tty_current_height);
-    memset(tty_attributes_buffer, 0, tty_current_width * tty_current_height);
+    memset(tty_character_buffer, 0, tty_current_width * tty_current_height * sizeof(uint32_t));
+    memset(tty_attributes_buffer, 0, tty_current_width * tty_current_height * sizeof(uint32_t));
 }
 
 void tty_clear() {
@@ -77,11 +73,15 @@ void tty_build_buffers() {
 }
 
 void tty_set_color(uint32_t color) {
-    tty_current_color = color;
+    tty_attributes_buffer[tty_current_row * tty_current_width + tty_current_column] = color | TTY_ATTRIBUTE_COLOR;
 }
 
 uint32_t tty_get_color() {
-    return tty_current_color;
+    if(tty_attributes_buffer[tty_current_row * tty_current_width + tty_current_column] & TTY_ATTRIBUTE_COLOR) {
+        return tty_attributes_buffer[tty_current_row * tty_current_width + tty_current_column] & ~TTY_ATTRIBUTE_COLOR;
+    } else {
+        return 0xffffff;
+    }
 }
 
 void _tty_putc(int c) {
@@ -101,6 +101,13 @@ void _tty_putc(int c) {
         tty_current_column = 0;
         tty_current_row++;
         return;
+    } else if(c == '\t') {
+        if(tty_current_column + 4 >= tty_current_width) {
+            tty_current_row++;
+        }
+
+        tty_current_column = (tty_current_column + 4) % tty_current_width;
+        return;
     }
 
     tty_character_buffer[tty_current_row * tty_current_width + tty_current_column] = c;
@@ -113,7 +120,10 @@ void tty_putc(int c) {
     tty_render();
 }
 
+
 void tty_render() {
+    size_t tty_current_color = 0xffffff;
+
     for (size_t i = 0; i < tty_current_width * tty_current_height; i++) {
         uint32_t character = tty_character_buffer[i];
 
@@ -121,9 +131,8 @@ void tty_render() {
             continue;
 
         if(tty_attributes_buffer[i] & TTY_ATTRIBUTE_COLOR) {
-            uint32_t color = tty_attributes_buffer[i] & 0xffffff;
-
-            tty_set_color(color);
+            tty_current_color = tty_attributes_buffer[i] & 0xffffff;
+            qemu_note("COLOR: %x", tty_current_color);
         }
 
         draw_vga_ch(
@@ -150,6 +159,8 @@ void _tty_puts(const char *str) {
                     code = code * 10 + (*str++ & 0xff) - '0'; // 0-9
                 }
 
+                qemu_note("Got the code: %d", code);
+
                 str++; // Skip the 'm'
 
                 if(code == 0) {
@@ -160,11 +171,15 @@ void _tty_puts(const char *str) {
 
                 attr |= TTY_ATTRIBUTE_COLOR;
 
-                qemu_log("Wrote attribute at index %d", tty_current_row * tty_current_width + tty_current_column);
                 tty_attributes_buffer[tty_current_row * tty_current_width + tty_current_column] = attr;
+                qemu_log("Wrote attribute at index %d", tty_current_row * tty_current_width + tty_current_column);
             }
         } else {
             str--;
+        }
+
+        if(*str == 0) {
+            return;
         }
 
         uint16_t c = (uint16_t)(*str++ & 0xff);

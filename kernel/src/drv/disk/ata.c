@@ -419,18 +419,18 @@ void ata_write(uint8_t drive, const uint8_t* buf, size_t location, size_t length
 
 void ata_list() {
 	for (size_t i = 0; i < 4; i++) {
-		_tty_printf("\tATA: %s %s:  %s ",
+		tty_printf("\tATA: %s %s:  %s ",
 					PRIM_SEC((i >> 1) & 1),
 					MAST_SLV(i & 1),
 					drives[i].online?"online ":"offline"
 		);
 
 		if(!drives[i].online) {
-			_tty_printf("\n");
+			tty_printf("\n");
 			continue;
 		}
 
-        _tty_printf("%u sectors = ", drives[i].capacity);
+        tty_printf("%u sectors = ", drives[i].capacity);
 
         size_t megabytes;
 
@@ -440,24 +440,24 @@ void ata_list() {
             megabytes = (drives[i].capacity >> 5) / (1 << 6);
         }
 
-        _tty_printf("%u MB = %u GB", megabytes, megabytes >> 10);
+        tty_printf("%u MB = %u GB", megabytes, megabytes >> 10);
 
         if(drives[i].is_packet)
-            _tty_printf(" [PACKET DEVICE!!!]");
+            tty_printf(" [PACKET DEVICE!!!]");
 
         if(drives[i].is_sata)
-            _tty_printf(" [SATA]");
+            tty_printf(" [SATA]");
 
         if(drives[i].is_dma)
-            _tty_printf(" [DMA]");
+            tty_printf(" [DMA]");
 
         qemu_note("Drive %d", i);
 		qemu_note("'%s' '%s' '%s'", drives[i].model_name, drives[i].fwversion, drives[i].serial_number);
 
-		_tty_printf("\n\t|-- Model: \"%s\"; Firmware version: \"%s\";", drives[i].model_name, drives[i].fwversion);
-		_tty_printf("\n\t|-- Serial number: \"%s\";", drives[i].serial_number);
+		tty_printf("\n\t|-- Model: \"%s\"; Firmware version: \"%s\";", drives[i].model_name, drives[i].fwversion);
+		tty_printf("\n\t|-- Serial number: \"%s\";", drives[i].serial_number);
 
-		_tty_printf("\n");
+		tty_printf("\n");
 	}
 	
 	tty_printf("\n");

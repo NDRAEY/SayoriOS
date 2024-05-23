@@ -6,19 +6,21 @@
 
 void tty_error(char* format, ...)
 {
-    uint32_t orig = tty_get_color();
-    
+//    uint32_t orig = tty_get_color();
+//
     ERROR_sound();
-    tty_set_color(COLOR_ERROR);
+//    tty_set_color(COLOR_ERROR);
 
     va_list args;
     va_start(args, format);
 
+    tty_puts("\033[31m");
     tty_vprintf(format, args);
+    tty_puts("\033[0m");
 
     va_end(args);
 
-    tty_set_color(orig);
+//    tty_set_color(orig);
 }
 
 void tty_attention(char* format, ...)

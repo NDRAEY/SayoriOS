@@ -241,7 +241,7 @@ void input() {
 
 void minesweeper() {
   clean_screen();
-  set_cursor_enabled(false);
+//  set_cursor_enabled(false);
   keyboardctl(KEYBOARD_ECHO, false);
 
   init_field(10, 10);
@@ -271,7 +271,7 @@ void minesweeper() {
   }
 
   clean_screen();
-  set_cursor_enabled(true);
+//  set_cursor_enabled(true);
 
   keyboardctl(KEYBOARD_ECHO, true);
 }

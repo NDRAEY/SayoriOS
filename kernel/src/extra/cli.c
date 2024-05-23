@@ -72,14 +72,14 @@ CLI_CMD_ELEM G_CLI_CMD[];
 
 
 uint32_t CLI_CMD_CLS(uint32_t c, char* v[]){
-    clean_tty_screen();
+    tty_clear();
     return 1;
 }
 
 uint32_t CLI_CMD_SYSINFO(uint32_t c, char* v[]){
-    clean_tty_screen();
+    tty_clear();
 
-    setPosY(256);
+    tty_set_y(32);
 
     tty_printf("SayoriOS by SayoriOS Team (pimnik98 and NDRAEY)\n\n");
 
@@ -115,7 +115,7 @@ uint32_t CLI_CMD_DISKPART(uint32_t c, char* v[]){
     }
 
     _tty_printf("\n");
-    //clean_tty_screen();
+    //tty_clear();
     return 1;
 }
 
@@ -129,7 +129,7 @@ uint32_t CLI_CMD_CAT(uint32_t c, char* v[]){
     }
     FILE* cat_file = fopen(v[1], "r");
     if (!cat_file){
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("[CMD] [CAT] Не удалось найти файл `%s`. Проверьте правильность введенного вами пути.\n",v[1]);
         return 2;
     }
@@ -159,7 +159,7 @@ uint32_t CLI_CMD_DEL(uint32_t c, char* v[]){
     bool res = unlink(v[1]);
 
     if (!res) {
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("Не удалось удалить файл, возможно файл не найден или у вас недостаточно прав для его удаления.\n");
         return 1;
     }
@@ -178,7 +178,7 @@ uint32_t CLI_CMD_RMDIR(uint32_t c, char* v[]){
     bool res = rmdir(v[1]);
 
     if (!res) {
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("Не удалось удалить папку, возможно папка не найдена или у вас недостаточно прав для её удаления.\n");
         return 1;
     }
@@ -196,7 +196,7 @@ uint32_t CLI_CMD_TOUCH(uint32_t c, char* v[]){
     bool res = touch(v[1]);
 
     if (!res) {
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("Не удалось создать файл, возможно файл уже существует или у вас недостаточно прав для её создания в этой папке.\n");
         return 1;
     }
@@ -214,7 +214,7 @@ uint32_t CLI_CMD_MKDIR(uint32_t c, char* v[]){
     bool res = mkdir(v[1]);
 
     if (!res) {
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("Не удалось создать папка, возможно папка уже существует или у вас недостаточно прав для её создания в этой папке.\n");
         return 1;
     }
@@ -232,7 +232,7 @@ uint32_t CLI_CMD_JSE(uint32_t c, char* v[]){
     int res = elk_file(v[1]);
 
     if (!res) {
-        tty_setcolor(COLOR_ERROR);
+        tty_set_color(COLOR_ERROR);
         tty_printf("   [JSE] Произошла ошибка при выполнении скрипта. Подробности отправлены в консоль.");
     }
     return 1;
@@ -319,7 +319,7 @@ uint32_t CLI_CMD_DIR(uint32_t c, char* v[]) {
 
 uint32_t CLI_CMD_RUN(uint32_t c, char* v[]) {
     if (c == 0){
-        //tty_setcolor(COLOR_ERROR);
+        //tty_set_color(COLOR_ERROR);
         tty_printf("Файл не указан.\n");
         return 1;
     }
@@ -476,7 +476,7 @@ uint32_t CLI_RD(uint32_t argc, char* argv[]) {
 
     dpm_read(disk[0], 0, 0, 1024, newdata);
 
-    hexview_advanced(newdata, 1024, 26, true, _tty_printf);
+    hexview_advanced(newdata, 1024, 26, true, tty_printf);
 
     punch();
 
@@ -524,7 +524,7 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
 };
 
 void cli_handler(const char* ncmd){
-	set_cursor_enabled(0);
+//	set_cursor_enabled(0);
 
 	uint32_t argc = str_cdsp(ncmd," ") + 1;
     char* argv[128] = {0};
@@ -548,13 +548,13 @@ void cli_handler(const char* ncmd){
 		CLI_CMD_RUN(argc + 1, argv);
 	}
 
-	set_cursor_enabled(1);
+//	set_cursor_enabled(1);
 }
 
 void cli(){
 	qemu_log("[CLI] Started...");
-	tty_set_bgcolor(0xFF000000);
-    tty_setcolor(0xFFFFFF);
+//	tty_set_bgcolor(0xFF000000);
+    tty_set_color(0xFFFFFF);
 
 	variable_write("HOSTNAME", "SAYORISOUL");
 	variable_write("SYSTEMROOT", "R:\\Sayori\\");
@@ -563,7 +563,7 @@ void cli(){
 
 // 	T_CLI_KYB = RegTrigger(0x0001, &F_CLI_KYB);
 	
-//	clean_tty_screen();
+//	tty_clear();
 	_tty_printf("SayoriOS [Версия: v%d.%d.%d]\n",VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 	_tty_printf("(c) SayoriOS Team, 2023.\nДля дополнительной информации наберите \"help\".\n\n");
 
@@ -574,7 +574,7 @@ void cli(){
 		size_t memory_cur = system_heap.used_memory;
         size_t memory_cnt_cur = system_heap.allocated_count;
 
-    	tty_setcolor(0xFFFFFF);
+    	tty_set_color(0xFFFFFF);
 		tty_printf("%s>", G_CLI_PATH);
 		memset(input_buffer, 0, 256);
 

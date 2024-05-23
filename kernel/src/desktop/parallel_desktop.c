@@ -103,7 +103,7 @@ void parallel_desktop_start() {
 	size_t frames = 0;
 
     qemu_log("Reached init...");    
-    set_cursor_enabled(false);
+    // set_cursor_enabled(false);
     keyboardctl(KEYBOARD_ECHO, false);
 
     log_window_manager_state();
@@ -240,11 +240,11 @@ void parallel_desktop_start() {
     window_destroy(root_window);
     qemu_log("Destroyed root_window");
 
-    set_cursor_enabled(true);
+    // set_cursor_enabled(true);
     
     qemu_log("Exit successfully!!!");
 
-    clean_tty_screen();
+    tty_clear();
 
     tty_printf("Memory allocation info written to COM1 (debug) port!!!");
     log_window_manager_state();

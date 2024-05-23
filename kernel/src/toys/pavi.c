@@ -33,14 +33,14 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
 
 	fclose(file);
 
-    clean_tty_screen();
+    tty_clear();
     tty_printf("Pavi - Opening '%s'...", argv[1]);
 
 	tga_extract_info(argv[1], &pavi_tga_header);
 
     qemu_log("W: %d H: %d", pavi_tga_header.w, pavi_tga_header.h);
 
-    clean_tty_screen();
+    tty_clear();
     tty_printf("Pavi - Reading contents of '%s'...", argv[1]);
 
     pavi_image_buffer = kmalloc(pavi_tga_header.w * pavi_tga_header.h * 4);
@@ -68,7 +68,7 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
 
     size_t end_load = timestamp();
 
-    clean_tty_screen();
+    tty_clear();
     tty_printf("Pavi - '%s' [%dx%d] => [%dx%d] (Loaded in: %u ms) (Press ESC to exit)", argv[1], pavi_tga_header.w, pavi_tga_header.h, nw, nh, end_load - start_load);
 
     keyboardctl(KEYBOARD_ECHO, 0);
@@ -85,7 +85,7 @@ uint32_t pavi_view(uint32_t argc, char* argv[]) {
         }
     }
 
-    clean_tty_screen();
+    tty_clear();
 
     keyboardctl(KEYBOARD_ECHO, 1);
 

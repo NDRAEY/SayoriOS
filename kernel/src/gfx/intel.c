@@ -196,7 +196,7 @@ void igfx_init() {
     back_framebuffer_addr = krealloc(back_framebuffer_addr, framebuffer_size);
     memset(back_framebuffer_addr, 0x00, framebuffer_size);
 
-    clean_tty_screen();
+    tty_clear();
 
 	tty_printf("Screen now tuned to: %dx%d;  Size: %d; BackFB: %x\n", igfx_width, igfx_height, framebuffer_size, back_framebuffer_addr);
 

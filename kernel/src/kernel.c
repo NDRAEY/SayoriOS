@@ -292,28 +292,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 
     tty_init();
 
-    tty_printf("SayoriOS v%d.%d.%d\nДата компиляции: %s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, __TIMESTAMP__);
-    tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
-    tty_printf("\n\n");
-    tty_printf("Test strings below:\n");
-    tty_printf("Hello, world!\n");
-    tty_printf("Pika-Pika Pika-Pika!\n");
-    tty_printf("001. Bulbasaur\n");
-    tty_printf("002. Ivysaur\n");
-    tty_printf("003. Venusaur\n");
-    tty_printf("004. Charmander\n");
-    tty_printf("005. Charmeleon\n");
-    tty_printf("006. Charizard\n");
-    tty_printf("007. Squirtle\n");
-    tty_printf("008. Wartortle\n");
-    tty_printf("009. Blastoise\n");
-    tty_printf("010. Caterpie\n");
-    tty_printf("011. Weedle\n");
-    tty_printf("012. Beedrill\n");
-    tty_printf("013. Snorlax\n");
-
-
-//    draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
+    //    draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
 //    punch();
 //
 //    bootScreenInit(15);
@@ -333,82 +312,81 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
 
-#if 0
-    bootScreenPaint("PCI Setup...");
+//    bootScreenPaint("PCI Setup...");
     pci_scan_everything();
 
-    bootScreenPaint("Инициализация ATA...");
+//    bootScreenPaint("Инициализация ATA...");
     ata_init();
     ata_dma_init();
 
-    bootScreenPaint("Калибровка датчика температуры процессора...");
+//    bootScreenPaint("Калибровка датчика температуры процессора...");
     cputemp_calibrate();
 
-    bootScreenPaint("Настройка FDT...");
+//    bootScreenPaint("Настройка FDT...");
     file_descriptors_init();
 
-    char* btitle = 0;
+//    char* btitle = 0;
 
-    asprintf(&btitle, "Создание виртуального диска (%u kb.)...", ramdisk_size/1024);
+//    asprintf(&btitle, "Создание виртуального диска (%u kb.)...", ramdisk_size/1024);
 
-    bootScreenPaint(btitle);
-    kfree(btitle);
+//    bootScreenPaint(btitle);
+//    kfree(btitle);
     __createRamDisk();
-    
-    bootScreenPaint("Настройка системных вызовов...");
+
+//    bootScreenPaint("Настройка системных вызовов...");
     qemu_log("Registering System Calls...");
     init_syscalls();
-    
-    bootScreenPaint("Настройка ENV...");
+
+//    bootScreenPaint("Настройка ENV...");
     qemu_log("Registering ENV...");
     configure_env();
-    
-    bootScreenPaint("Определение процессора...");
+
+//    bootScreenPaint("Определение процессора...");
     detect_cpu(1);
-    
-    bootScreenPaint("Конфигурация триггеров...");
+
+//    bootScreenPaint("Конфигурация триггеров...");
     triggersConfig();
-    
-    bootScreenPaint("Инициализация списка сетевых карт...");
+
+//    bootScreenPaint("Инициализация списка сетевых карт...");
     netcards_list_init();
-    
-    bootScreenPaint("Инициализация сетевого стека...");
+
+//    bootScreenPaint("Инициализация сетевого стека...");
     netstack_init();
-    bootScreenPaint("Инициализация ARP...");
+//    bootScreenPaint("Инициализация ARP...");
     arp_init();
-    bootScreenPaint("Инициализация RTL8139...");
+//    bootScreenPaint("Инициализация RTL8139...");
     rtl8139_init();
-    bootScreenPaint("Инициализация DHCP...");
+//    bootScreenPaint("Инициализация DHCP...");
     dhcp_init_all_cards();
-    bootScreenPaint("Готово...");
-    bootScreenClose(0x000000, 0xFFFFFF);
-    tty_set_bgcolor(COLOR_BG);
-    
+//    bootScreenPaint("Готово...");
+//    bootScreenClose(0x000000, 0xFFFFFF);
+//    tty_set_bgcolor(COLOR_BG);
+
     tty_printf("SayoriOS v%d.%d.%d\nДата компиляции: %s\n",
                VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
                __TIMESTAMP__                                   // Время окончания компиляции ядра
         );
     tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
-    
+
     if (__milla_getCode() != 0) {
         tty_error("[ОШИБКА] [NatSuki] Не удалось выполнить инициализацию. Код ошибки: %d", __milla_getCode());
     }
-    
+
     sayori_time_t time = get_time();
     tty_printf("\nВремя: %d:%d:%d\n", time.hours, time.minutes, time.seconds);
-    
-    _tty_printf("Listing ATA disks:\n");
+
+    tty_printf("Listing ATA disks:\n");
     ata_list();
-    
-    tty_taskInit();
-    
+
+//    tty_taskInit();
+
     if (is_rsdp){
         RSDPDescriptor* rsdp = rsdp_find();
         qemu_log("RSDP at: %x", rsdp);
 
         if(rsdp) {
 			acpi_scan_all_tables(rsdp->RSDTaddress);
-			
+
 	        find_facp(rsdp->RSDTaddress);
 
             lapic_init(rsdp);
@@ -417,24 +395,24 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
             qemu_err("ACPI not supported! (Are you running in UEFI mode?)");
         }
     }
-    
+
     tty_printf("Processors: %d\n", system_processors_found);
 
     // FIXME: WOW! We can write into 0!
     //	*((volatile int*)0) = 0x12345678;
     //	qemu_log("Data: %x", *((volatile int*)0));
-    
+
     if (test_network) {
         _tty_printf("Listing network cards:\n");
-    
+
         uint8_t mac_buffer[6] = {0};
-    
+
         for (int i = 0; i < netcards_get_count(); i++) {
             netcard_entry_t *entry = netcard_get(i);
-    
+
             _tty_printf("\tName: %s\n", entry->name);
             entry->get_mac_addr(mac_buffer);
-    
+
             _tty_printf("\tMAC address: %v:%v:%v:%v:%v:%v\n",
                         mac_buffer[0],
                         mac_buffer[1],
@@ -451,9 +429,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     //		fatTest();
     //		_smfs_init();
     //	}
-    
+
     ac97_init();
-    
+
     /// Пример закругленных квадратов
     // drawRoundedSquare(32,32, 128, 2, 0xFFFF0000, 0xFF0000FF);
     // drawRoundedRectangle(32,32,128,16,4,0xFFFF0000, 0xFF0000FF);
@@ -464,23 +442,9 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     ahci_init();
 
     /// Обновим данные обо всех дисках
-    fsm_dpm_update(-1);    
-    
-    // vio_ntw_init();
+    fsm_dpm_update(-1);
 
-// 	size_t hwstart = timestamp();
-// 
-// 	for(int i = 0, sh = getScreenHeight(); i < sh; i+=20) {	
-// 		for(int j = 0, sw = getScreenWidth(); j < sw; j+=20) {
-// 			draw_filled_rectangle(j, i, 20, 20, rand());
-// 		}
-// 	}
-// 
-// 	qemu_note("Program finished generating rects in %d ms", hwstart);
-// 
-// 	punch();
-// 
-// 	while(1);
+    // vio_ntw_init();
 
     igfx_init();
 
@@ -491,9 +455,10 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 
+    tty_printf("\033[31mWHAT THE FUCK\033[0m\nHAHHAHA\n");
+
     cli();
 
-#endif
 
     while(1);
 }

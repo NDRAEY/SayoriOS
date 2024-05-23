@@ -20,7 +20,7 @@ size_t miniplay_anim_pos = 0;
 
 void miniplay_display() {
 	while(1) {
-		clean_tty_screen_no_update();
+		tty_clear();
 
 		_tty_printf("Miniplay by NDRAEY (c) 2023\n\n");
 		_tty_printf("Now playing - %s\n\n", miniplay_filename);
@@ -92,7 +92,7 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 	char* data = kmalloc(miniplay_filesize);
 	fread(file, miniplay_filesize, 1, data);
 
-	set_cursor_enabled(false);
+//	set_cursor_enabled(false);
 
 	miniplay_pages_total = ac97_copy_user_memory_to_dma(data, miniplay_filesize);
 
@@ -120,9 +120,9 @@ uint32_t miniplay(uint32_t argc, char* args[]) {
 
 	thread_exit(display_thread);
 
-	clean_tty_screen();
+	tty_clear();
 
-	set_cursor_enabled(true);
+//	set_cursor_enabled(true);
 
 	return 0;
 }

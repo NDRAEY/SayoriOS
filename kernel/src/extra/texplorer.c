@@ -51,7 +51,7 @@ int TE_getColor(int item){
 }
 
 void TE_DrawTime(){
-    setPosY(getScreenHeight() - 20);
+    tty_set_y(getScreenHeight() - 20);
 	
 //	sayori_time_t time = get_time();
 	setPosX(getScreenWidth() - 68);
@@ -77,17 +77,17 @@ void TE_DrawMessageBox(char* title, char* msg, int mode, int x, int y, int close
 	drawRect(x+1,y+1,w-3,h-3,TE_getColor(TE_COLOR_TITLE_BODY));
 	drawRectBorder(x+1,y+1,w-3,h-3,TE_getColor(TE_COLOR_BORDER));
 	setPosX(x+6);
-	setPosY(y+4);
+	tty_set_y(y+4);
 	_tty_puts_color(title,TE_getColor(TE_COLOR_TITLE_TEXT),TE_getColor(TE_COLOR_TITLE_BODY));
 	drawRectBorder(x+1,y+1,w-3,18,TE_getColor(TE_COLOR_BORDER));
 	///< Рисуем текст
 	setPosX(x+6);
-	setPosY(y+22);
+	tty_set_y(y+22);
 	_tty_puts_color(msg,TE_getColor(TE_COLOR_TEXT),TE_getColor(TE_COLOR_BODY));
 	///< Рисуем кнопку закрытия
 	if (close){
 		setPosX(x+w-12);
-		setPosY(y+4);
+		tty_set_y(y+4);
 		_tty_puts_color("X",TE_getColor(TE_COLOR_TITLE_TEXT),TE_getColor(TE_COLOR_TITLE_BODY));
 		drawRectBorder(x+w-16,y+1,14,18,TE_getColor(TE_COLOR_BORDER));
 	}
@@ -96,7 +96,7 @@ void TE_DrawMessageBox(char* title, char* msg, int mode, int x, int y, int close
 		drawRect(x+16,y+h-22,w-32,16,TE_getColor(TE_COLOR_BTN_BODY));
 		drawRectBorder(x+17,y+h-21,w-35,15,TE_getColor(TE_COLOR_BTN_BORD));
 		setPosX(x+((w-32)/2));
-		setPosY(y+h-20);
+		tty_set_y(y+h-20);
 		_tty_puts_color("OK",TE_getColor(TE_COLOR_BTN_TEXT),TE_getColor(TE_COLOR_BTN_BODY));
 	}
 	if (mode == 2){
@@ -112,7 +112,7 @@ void TE_DrawMessageBox(char* title, char* msg, int mode, int x, int y, int close
 	}
 	
 	setPosX(0);
-	setPosY(0);
+	tty_set_y(0);
 }
 
 void TE_IconsLoader(){
@@ -171,14 +171,14 @@ void TE_Desktop(){
 	drawRectBorder(2, getScreenHeight() - 21, 38, 18, TE_getColor(TE_COLOR_BORDER));
 
 	setPosX(6);
-    setPosY(getScreenHeight() - 20);
+    tty_set_y(getScreenHeight() - 20);
     tty_puts_color("Пуск",TE_getColor(TE_COLOR_START_TEXT),TE_getColor(TE_COLOR_START_BODY));
 
 	TE_DrawTime();
 
 	
 	setPosX(0);
-	setPosY(0);
+	tty_set_y(0);
 }
 
 void TExplorer(){
@@ -190,7 +190,7 @@ void TExplorer(){
 	TE_DrawMessageBox("Инициализация...", "Ожидание ответа NatSuki...", 2, getScreenWidth() / 4, 100, 0, 3, 10);
 
 	setPosX(0);
-	setPosY(0);
+	tty_set_y(0);
 
 	int zx = 0;
 	while(1){

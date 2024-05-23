@@ -25,38 +25,38 @@ void headBar(){
     drawLine(2,TUI_BASE_COLOR_HEAD);
     char* OSNAME = " SayoriOS v0.3.5 (Dev)";
     setPosX(0);
-    setPosY(16*1);
+    tty_set_y(16*1);
     tty_puts_color(OSNAME,getColorsTUI(false), TUI_BASE_COLOR_HEAD);
 
-    tty_setcolor(getColorsTUI(false));
+    tty_set_color(getColorsTUI(false));
     char* TIME = "10/10/2022 12:23";
     setPosX((getMaxStrLineTUI()-16)*8);
-    setPosY(16*1);
+    tty_set_y(16*1);
     drawRect((getMaxStrLineTUI()-16)*8,16,18*8, 16,TUI_BASE_COLOR_HEAD);
     tty_puts_color(TIME,getColorsTUI(false), TUI_BASE_COLOR_HEAD);
 }
 
 void headBarOld(){
     setPosX(16);
-    setPosY(16*4);
+    tty_set_y(16*4);
     char infoCPU[512];
     substr(infoCPU, "CPU: sgetNameBrand()", 0, (getMaxListMenuTUI()/2)-2);
     tty_puts_color(infoCPU,getColorsTUI(false), getColorsTUI(true));
 
     setPosX(16);
-    setPosY(16*5);
+    tty_set_y(16*5);
     char infoRAM[512];
     //substr(infoRAM, strcat(format_string("RAM: %d",(getInstalledRam())), kb), 0, (getMaxListMenuTUI()/2)-2);
     tty_puts_color(infoRAM,getColorsTUI(false), getColorsTUI(true));
 
     setPosX(16);
-    setPosY(16*6);
+    tty_set_y(16*6);
     char infoVideo[512];
     substr(infoVideo, "Video: Basic video adapter (Unknown)", 0, (getMaxListMenuTUI()/2)-2);
     tty_puts_color(infoVideo,getColorsTUI(false), getColorsTUI(true));
 
     setPosX(16);
-    setPosY(16*7);
+    tty_set_y(16*7);
     char infoDisplay[512];
     substr(infoDisplay, "Display", 0, (getMaxListMenuTUI()/2)-2);
     tty_puts_color(infoDisplay,getColorsTUI(false), getColorsTUI(true));
@@ -65,7 +65,7 @@ void headBarOld(){
 void footBar(char* text){
     drawRect(0,getHeightScreen()-16,1024,getHeightScreen(),VESA_LIGHT_GREY);
     setPosX(0);
-    setPosY(getHeightScreen()-16);
+    tty_set_y(getHeightScreen()-16);
     tty_puts_color(text,VESA_BLACK, VESA_LIGHT_GREY);
 }
 
@@ -77,8 +77,8 @@ void updateLoop(){
     // Выводим нажатую кнопку во второй колонке в шапке
     //char* TIME = "10/10/2022 12:23";
     setPosX((getMaxStrLineTUI()-20)*8);
-    setPosY(0);
-    tty_setcolor(getColorsTUI(false));
+    tty_set_y(0);
+    tty_set_color(getColorsTUI(false));
     drawRect((getMaxStrLineTUI()-16)*8,0,20*8, 15, TUI_BASE_COLOR_HEAD);
 
     /* CAUSES PageFault
@@ -124,7 +124,7 @@ void updateLoop(){
     }
     // Возращаем указатель обратно
     setPosX(oldPosX);
-    setPosY(oldPosY);
+    tty_set_y(oldPosY);
 }
 
 void menu0(bool items){
@@ -240,7 +240,7 @@ int tshell(){
                 setLastUpdateTUI(getTicks()+3);
                 uint32_t handler = menuHandler();
                 if (handler == -1){
-                    clean_tty_screen();
+                    tty_clear();
                     tui_destroy();
                     break;
                 }
@@ -289,14 +289,14 @@ int tshell(){
             createErrorBox("Error in TUI module. ","You will be returned to the console in 1 seconds.");
             sleep_ms(1000);
             //bgColor = VESA_BLACK;
-            clean_tty_screen();
+            tty_clear();
             tui_destroy();
             break;
         } else {
             if (i == 0){
                 i = 1;
                 // Чистим экран
-                clean_tty_screen();
+                tty_clear();
                 // Рисуем обводку
                 drawRectLine(0,16*2,getWidthScreen(),getWorkSpaceHeightTUI()+32,VESA_WHITE,VESA_LIGHT_GREY,1);
                 // Выводим шапку
@@ -307,7 +307,7 @@ int tshell(){
                 footBar(" Press 'Start' to open menu");
                 // Установка позиции для печати
                 setPosX(8);
-                setPosY(16*8);
+                tty_set_y(16*8);
                 //changeStageKeyboard(1);
             }
             // Обновляем таймер, для переотображения

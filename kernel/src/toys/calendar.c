@@ -100,9 +100,9 @@ void calendar(int argc, char** argv) {
 		if((int)i == tm.day && tm.month == month) {
 			// printf("\033[7m%2d\033[0m ", i);
 
-			tty_setcolor(0xff00ff);
+			tty_set_color(0xff00ff);
 			printf("%2d ", i);
-			tty_setcolor(VESA_WHITE);
+			tty_set_color(VESA_WHITE);
 
 			continue;
 		}

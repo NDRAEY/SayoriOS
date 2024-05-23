@@ -184,29 +184,29 @@ SOURCES=\
 	kernel/src/io/status_loggers.c \
 	kernel/src/io/status_sounds.c \
 	kernel/src/sys/bootscreen.c \
-	kernel/src/kernel.c \
-#   kernel/src/toys/calendar.c \
-	kernel/src/sys/lapic.c \
-	kernel/src/drv/rtl8139.c \
 	kernel/src/drv/disk/ahci.c \
 	kernel/src/drv/audio/ac97.c \
 	kernel/src/drv/disk/ata_dma.c \
-	kernel/src/desktop/parallel_desktop.c \
 	kernel/src/drv/disk/atapi.c \
 	kernel/src/drv/disk/ata_pio.c \
 	kernel/src/drv/disk/ata.c \
+	kernel/src/drv/rtl8139.c \
+	kernel/src/sys/lapic.c \
+	kernel/src/sys/acpi.c \
+	kernel/src/desktop/parallel_desktop.c \
 	kernel/src/toys/miniplay.c \
 	kernel/src/drv/disk/floppy.c \
 	kernel/src/gfx/intel.c \
 	kernel/src/drv/audio/hda.c \
-	kernel/src/sys/acpi.c \
 	kernel/src/toys/minesweeper.c \
 	kernel/src/toys/diskctl.c \
 	kernel/src/net/net_info_cli.c \
 	kernel/src/extra/cli.c \
-	$(GAMEBOY) \
-	kernel/src/lib/base64.c \
 	kernel/src/toys/pavi.c \
+	$(GAMEBOY) \
+	kernel/src/toys/calendar.c \
+	kernel/src/kernel.c \
+	# kernel/src/lib/base64.c \
 	kernel/src/toys/piano.c \
 	kernel/src/toys/dino.c \
 	kernel/src/lib/ttf_font.c \
