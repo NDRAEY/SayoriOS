@@ -441,7 +441,7 @@ void pci_enable_bus_mastering(uint8_t bus, uint8_t slot, uint8_t func) {
 }
 
 void pci_print_nth(uint8_t class, uint8_t subclass, uint8_t bus, uint8_t slot, uint8_t hdr, uint16_t vendor, uint16_t device, uint8_t func) {
-    _tty_printf("%d:%d:%d:%d.%d %s: %s (%x), девайс: %x ",
+    tty_printf("%d:%d:%d:%d.%d %s: %s (%x), девайс: %x ",
                 class,
                 subclass,
                 bus,
@@ -453,7 +453,7 @@ void pci_print_nth(uint8_t class, uint8_t subclass, uint8_t bus, uint8_t slot, u
                 device);
 
     if((hdr & 0x80) == 0) {
-        _tty_printf("[Multifunc]");
+        tty_printf("[Multifunc]");
     }
 
     uint32_t bar0 = pci_read32(bus, slot, func, 0x10 + (0 * 4));
@@ -471,7 +471,7 @@ void pci_print_nth(uint8_t class, uint8_t subclass, uint8_t bus, uint8_t slot, u
                 bar4,
                 bar5);
 
-    _tty_printf("\n");
+    tty_printf("\n");
 }
 
 void pci_scan_everything() {

@@ -122,3 +122,7 @@ inline static __attribute__((always_inline)) uint32_t getDisplaySize(){
 
 void setPixelAlpha(uint32_t x, uint32_t y, rgba_color color);
 void rect_copy(int x, int y, int width, int height);
+
+void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, size_t y, size_t color);
+
+void clean_screen();

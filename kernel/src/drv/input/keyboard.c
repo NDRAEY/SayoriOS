@@ -214,7 +214,7 @@ int getIntKeyboardWait(){
     return lastKey;
 }
 
-void* getCharKeyboardWait(bool ints) {
+volatile void * getCharKeyboardWait(bool ints) {
 	kmode = 2;
 	while(kmode==2) {
 		if (lastKey != 0 && !(lastKey & 0x80)) {
@@ -230,7 +230,7 @@ void* getCharKeyboardWait(bool ints) {
     }
 }
 
-void kbd_add_char(char *buf, char* key) {
+void kbd_add_char(volatile char *buf, char* key) {
 	if(kmode == 1 && curbuf != 0) {
 		if (!(lastKey == 0x1C || lastKey == 0x0E)) {
 			strcat(buf, key);
@@ -239,7 +239,7 @@ void kbd_add_char(char *buf, char* key) {
 		
 		if(lastKey == 0x0E) { // BACKSPACE
             if(chartyped > 0) {
-				tty_backspace();
+//				tty_backspace();
 				chartyped--;
 				buf[chartyped] = 0;
 			}
@@ -331,8 +331,9 @@ void keyboardHandler(registers_t regs){
         char* key = getCharKeyboard(lastKey, false);
         if (key != 0 && lastKey < 128){
             if(echo) {
-                if(!key_ctrl && lastKey != 0x0E)
-                    tty_printf("%s", key);
+                if(!key_ctrl && lastKey != 0x0E) {
+                    tty_puts(key);
+                }
             }
 			kbd_add_char(curbuf, key);
         }

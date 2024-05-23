@@ -82,11 +82,11 @@ uint32_t bootScreenTheme(uint32_t type){
  * @param tx - Установить цвет для вывода текста
  */
 void bootScreenClose(uint32_t bg, uint32_t tx){
-    tty_setcolor(tx);
+    tty_set_color(tx);
     drawRect(0, 0, getScreenWidth(), getScreenHeight(), bg);
-    setPosX(0);
-    setPosY(0);
-    tty_changeState(true);
+    tty_set_x(0);
+    tty_set_y(0);
+//    tty_changeState(true);
 }
 
 /**
@@ -102,8 +102,8 @@ void bootScreenChangeMode(int m){
  * @brief Выводит во время загрузки служебную информацию BootScreen
  */
 void bootScreenInfo(){
-    setPosX(0);
-    setPosY(0);
+    tty_set_x(0);
+    tty_set_y(0);
     if (!lazy){
         tty_printf("SayoriOS v%d.%d.%d\nBuilt: %s\n",
         VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,    // Версия ядра
@@ -113,14 +113,14 @@ void bootScreenInfo(){
         char* about = "(c) SayoriOS Team";
         uint32_t centerAbout = (maxStrLine/2)-(strlen(about)/2);
 
-        tty_setcolor(bootScreenTheme(2));
-        tty_set_bgcolor(bootScreenTheme(1));
-        setPosX(((1+centerAbout)*8));
-        setPosY(getScreenHeight() - 32);
+        tty_set_color(bootScreenTheme(2));
+//        tty_set_bgcolor(bootScreenTheme(1));
+        tty_set_x(((1+centerAbout)*8));
+        tty_set_y(getScreenHeight() - 32);
         tty_printf(about);
     }
-    setPosX(0);
-    setPosY(16*5);
+    tty_set_x(0);
+    tty_set_y(16*5);
 
 
 }
@@ -136,7 +136,7 @@ void bootScreenProcentPaint(){
     uint32_t padding_h = maxHeightLine/4;
     uint32_t proc = (curElem*100)/maxElem;
     //qemu_log("[BS] Proc: %d | C: %d | E: %d",proc,curElem,maxElem);
-    //setPosX(8*8);
+    //tty_set_x(8*8);
 
     drawRect(8*8,(16*((maxHeightLine-padding_h+2))),(proc)*7,16,bootScreenTheme(0));
 }
@@ -151,11 +151,11 @@ void bootScreenPaint(char* title){
         qemu_log("[BOOT] %s",title);
     
     if (mode == 1){
-        tty_changeState(true);
-        tty_set_bgcolor(bootScreenTheme(1));
-        tty_setcolor(bootScreenTheme(0));
+//        tty_changeState(true);
+//        tty_set_bgcolor(bootScreenTheme(1));
+        tty_set_color(bootScreenTheme(0));
         tty_printf("%s\n",title);
-        tty_changeState(false);
+//        tty_changeState(false);
         punch();
         return;
     }
@@ -163,9 +163,9 @@ void bootScreenPaint(char* title){
     maxStrLine = (getScreenWidth() / 8) - 2;
     maxHeightLine = getScreenHeight() / 16;
     
-    tty_set_bgcolor(bootScreenTheme(1));
-    tty_setcolor(bootScreenTheme(0));
-    tty_changeState(true);
+//    tty_set_bgcolor(bootScreenTheme(1));
+    tty_set_color(bootScreenTheme(0));
+//    tty_changeState(true);
 
     uint32_t centerTitle = (maxStrLine/2) - (mb_strlen(title)/2);
     uint32_t padding_h = maxHeightLine/4;
@@ -177,12 +177,12 @@ void bootScreenPaint(char* title){
         drawRect(0, 0, getScreenWidth(), getScreenHeight(), bootScreenTheme(1));
     }
     // punch();
-    setPosX(((1+centerTitle)*8));
-    setPosY(16*((maxHeightLine-padding_h)));
+    tty_set_x(((1+centerTitle)*8));
+    tty_set_y(((maxHeightLine-padding_h)));
     tty_printf(title);
     bootScreenInfo();
     bootScreenProcentPaint();
-    tty_changeState(false);
+//    tty_changeState(false);
     
     punch();
 }
@@ -196,7 +196,7 @@ void bootScreenInit(uint32_t count){
     // Предварительная настройка BootScreen
     maxElem = count;
     if (bs_logs) qemu_log("Init...");
-    tty_changeState(false);  // Disabling print functions
+//    tty_changeState(false);  // Disabling print functions
     maxStrLine = (getScreenWidth() / 8) - 2;
     maxHeightLine = getScreenHeight() / 16;
     bootScreenPaint("Загрузка...");

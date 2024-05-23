@@ -158,7 +158,7 @@ void jse_event_config(struct js* js){
 
     /// Отключаем анимацию и вывод ввода клавиатуры
     keyboardctl(KEYBOARD_ECHO, false);
-    set_cursor_enabled(false);
+//    set_cursor_enabled(false);
 }
 
 void jse_event_destroy(struct js* js){
@@ -173,5 +173,5 @@ void jse_event_destroy(struct js* js){
 
     /// Возвращаем анимацию и вывод ввода клавиатуры
     keyboardctl(KEYBOARD_ECHO, true);
-    set_cursor_enabled(true);
+//    set_cursor_enabled(true);
 }

@@ -6,6 +6,7 @@
 #include <common.h>
 #include "mem/pmm.h"
 #include "mem/vmm.h"
+#include "io/rgb_image.h"
 
 uint8_t *framebuffer_addr = 0;				///< Точка монтирования
 uint32_t framebuffer_pitch;				///< Частота обновления экрана
@@ -237,4 +238,15 @@ void rect_copy(int x, int y, int width, int height) {
         src += framebuffer_pitch;
         dest += framebuffer_pitch;
     }
+}
+
+void buffer_set_pixel4(uint8_t *buffer, size_t width, size_t height, size_t x, size_t y, size_t color) {
+    if(x >= width || y >= height)
+        return;
+
+   size_t pixpos = PIXIDX(width * 4, x * 4, y);
+
+   buffer[pixpos + 0] = (uint8_t)color;
+   buffer[pixpos + 1] = (uint8_t)(color >> 8);
+   buffer[pixpos + 2] = (uint8_t)(color >> 16);
 }

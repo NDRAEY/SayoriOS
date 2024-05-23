@@ -112,7 +112,6 @@ SOURCES=\
 	kernel/src/sys/sync.c \
 	kernel/src/gui/basics.c \
 	kernel/src/lib/pixel.c \
-	kernel/src/sys/bootscreen.c \
 	kernel/src/debug/hexview.c \
 	kernel/src/drv/video/vbe.c \
 	kernel/src/drv/input/keyboard.c \
@@ -124,7 +123,6 @@ SOURCES=\
 	kernel/src/drv/cmos.c \
 	kernel/src/drv/beeper.c \
 	kernel/src/user/env.c \
-	kernel/src/drv/pci.c \
 	kernel/src/gui/pointutils.c \
 	kernel/src/gui/line.c \
 	kernel/src/gui/circle.c \
@@ -144,8 +142,6 @@ SOURCES=\
 	$(wildcard kernel/src/lib/libstring/*.c) \
 	kernel/src/lib/math/cbrt.c \
 	kernel/src/sys/cpuid.c	\
-	kernel/src/drv/disk/ata.c \
-	kernel/src/drv/disk/atapi.c \
 	kernel/src/sys/cputemp.c	\
 	kernel/src/net/endianess.c \
 	kernel/src/net/cards.c \
@@ -156,24 +152,15 @@ SOURCES=\
 	kernel/src/net/dhcp.c \
 	kernel/src/net/icmp.c \
 	kernel/src/sys/system.c \
-	kernel/src/io/status_sounds.c \
-	kernel/src/io/status_loggers.c \
-	kernel/src/extra/cli.c \
 	kernel/src/sys/variable.c	\
 	kernel/src/fs/fat32.c \
 	kernel/src/sys/fxsave_region.c \
 	kernel/src/toys/gfxbench.c \
-	kernel/src/toys/miniplay.c \
-	kernel/src/drv/rtl8139.c \
 	kernel/src/drv/network/virtio_network.c \
 	kernel/src/fmt/tga.c \
 	kernel/src/lib/sprintf.c \
 	kernel/src/debug/ubsan.c \
-	kernel/src/drv/disk/floppy.c \
-	kernel/src/drv/disk/ata_dma.c \
-	kernel/src/drv/audio/ac97.c \
 	kernel/src/sys/elf.c \
-	kernel/src/sys/acpi.c \
 	kernel/src/sys/pixfmt.c \
 	kernel/src/desktop/render.c \
 	kernel/src/desktop/window.c \
@@ -183,36 +170,47 @@ SOURCES=\
 	kernel/src/desktop/widget_image.c \
 	kernel/src/desktop/widget_label.c \
 	kernel/src/desktop/eki.c \
-	kernel/src/desktop/parallel_desktop.c \
 	kernel/src/sys/mtrr.c \
-	kernel/src/net/net_info_cli.c \
 	kernel/src/toys/mala.c \
 	kernel/src/debug/memmeter.c \
-	kernel/src/drv/disk/ahci.c \
-	kernel/src/drv/disk/ata_pio.c \
-	kernel/src/toys/minesweeper.c \
-	kernel/src/toys/calendar.c \
-	kernel/src/toys/diskctl.c \
 	kernel/src/lib/utf_conversion.c \
-	kernel/src/lib/base64.c \
 	kernel/src/sys/file_descriptors.c \
 	kernel/src/net/tcp.c \
 	kernel/src/net/stack.c \
-	kernel/src/toys/pavi.c \
-	kernel/src/drv/audio/hda.c \
 	kernel/src/sys/grub_modules.c \
-	kernel/src/drv/disk/mbr.c \
-	kernel/src/sys/lapic.c \
 	kernel/src/drv/ps2.c \
-	kernel/src/gfx/intel.c \
-	$(GAMEBOY) \
+	kernel/src/drv/pci.c \
+	kernel/src/drv/disk/mbr.c \
+	kernel/src/io/status_loggers.c \
+	kernel/src/io/status_sounds.c \
+	kernel/src/sys/bootscreen.c \
 	kernel/src/kernel.c \
-#	kernel/src/lib/duktape.c \
+#   kernel/src/toys/calendar.c \
+	kernel/src/sys/lapic.c \
+	kernel/src/drv/rtl8139.c \
+	kernel/src/drv/disk/ahci.c \
+	kernel/src/drv/audio/ac97.c \
+	kernel/src/drv/disk/ata_dma.c \
+	kernel/src/desktop/parallel_desktop.c \
+	kernel/src/drv/disk/atapi.c \
+	kernel/src/drv/disk/ata_pio.c \
+	kernel/src/drv/disk/ata.c \
+	kernel/src/toys/miniplay.c \
+	kernel/src/drv/disk/floppy.c \
+	kernel/src/gfx/intel.c \
+	kernel/src/drv/audio/hda.c \
+	kernel/src/sys/acpi.c \
+	kernel/src/toys/minesweeper.c \
+	kernel/src/toys/diskctl.c \
+	kernel/src/net/net_info_cli.c \
+	kernel/src/extra/cli.c \
+	$(GAMEBOY) \
+	kernel/src/lib/base64.c \
+	kernel/src/toys/pavi.c \
 	kernel/src/toys/piano.c \
 	kernel/src/toys/dino.c \
 	kernel/src/lib/ttf_font.c \
 	kernel/src/extra/texplorer.c \
-	kernel/src/drv/disk/mbr.c \
 	kernel/src/fs/fat12.c \
 	kernel/src/fs/smfs.c \
 	kernel/src/lib/base64.c \

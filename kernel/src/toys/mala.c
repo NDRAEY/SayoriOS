@@ -91,9 +91,9 @@ void mala_flush() {
 void mala_exit() {
     kfree(buffer);
 
-    set_cursor_enabled(true);
+//    set_cursor_enabled(true);
 
-    clean_tty_screen();
+    tty_clear();
 }
 
 bool check_colors() {
@@ -166,7 +166,7 @@ uint32_t mala_draw(uint32_t argc, char* argv[]) {
 
     mala_init();
 
-    set_cursor_enabled(false);
+//    set_cursor_enabled(false);
 
     while(1) {
         if(getCharRaw() == 1) {

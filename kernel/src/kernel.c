@@ -105,11 +105,11 @@ void kHandlerCMD(char* cmd){
         if (strcmpn(out_data[0],"bootscreen")){
             // Config BOOTSCREEN
             if (strcmpn(out_data[1],"minimal")){
-                bootScreenChangeMode(1);
+//                bootScreenChangeMode(1);
             } else if (strcmpn(out_data[1],"light")){
-                bootScreenChangeTheme(1);
+//                bootScreenChangeTheme(1);
             } else if (strcmpn(out_data[1],"dark")) {
-                bootScreenChangeTheme(0);
+//                bootScreenChangeTheme(0);
             } else {
                 qemu_log("\t Sorry, no support bootscreen mode!");
             }
@@ -287,29 +287,53 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     
     clean_screen();
     
-    qemu_log("Initalizing fonts...");
-    tty_fontConfigurate();
-    
-    draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
-    punch();
+//    qemu_log("Initalizing fonts...");
+//    tty_fontConfigurate();
 
-    bootScreenInit(15);
-    bootScreenLazy(true);
+    tty_init();
 
-    bootScreenPaint("Настройка PS/2...");
+    tty_printf("SayoriOS v%d.%d.%d\nДата компиляции: %s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, __TIMESTAMP__);
+    tty_printf("\nВлюбиться можно в красоту, но полюбить - лишь только душу.\n(c) Уильям Шекспир\n");
+    tty_printf("\n\n");
+    tty_printf("Test strings below:\n");
+    tty_printf("Hello, world!\n");
+    tty_printf("Pika-Pika Pika-Pika!\n");
+    tty_printf("001. Bulbasaur\n");
+    tty_printf("002. Ivysaur\n");
+    tty_printf("003. Venusaur\n");
+    tty_printf("004. Charmander\n");
+    tty_printf("005. Charmeleon\n");
+    tty_printf("006. Charizard\n");
+    tty_printf("007. Squirtle\n");
+    tty_printf("008. Wartortle\n");
+    tty_printf("009. Blastoise\n");
+    tty_printf("010. Caterpie\n");
+    tty_printf("011. Weedle\n");
+    tty_printf("012. Beedrill\n");
+    tty_printf("013. Snorlax\n");
+
+
+//    draw_vga_str("Initializing devices...", 23, 0, 0, 0xffffff);
+//    punch();
+//
+//    bootScreenInit(15);
+//    bootScreenLazy(true);
+
+//    bootScreenPaint("Настройка PS/2...");
     ps2_init();
-    bootScreenPaint("Настройка PS/2 Клавиатуры...");
+//    bootScreenPaint("Настройка PS/2 Клавиатуры...");
     keyboardInit();
 
 	if(ps2_channel2_okay) {
-	    bootScreenPaint("Настройка PS/2 Мыши...");
-	    mouse_install();		
+//	    bootScreenPaint("Настройка PS/2 Мыши...");
+	    mouse_install();
 	}
 
-    bootScreenPaint("Пост-настройка PS/2...");
+//    bootScreenPaint("Пост-настройка PS/2...");
     ps2_keyboard_install_irq();
     ps2_mouse_install_irq();
 
+#if 0
     bootScreenPaint("PCI Setup...");
     pci_scan_everything();
 
@@ -468,6 +492,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 
     cli();
+
+#endif
 
     while(1);
 }

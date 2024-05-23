@@ -7,7 +7,7 @@ char* getCharKeyboard(int key, bool mode);
 void keyboardHandler(registers_t regs);
 void keyboardctl(uint8_t param, bool value);
 int getCharRaw();
-void* getCharKeyboardWait(bool use_int);
+volatile void * getCharKeyboardWait(bool ints);
 void keyboardInit();
 void gets(char *buffer);
 bool is_lctrl_key();
