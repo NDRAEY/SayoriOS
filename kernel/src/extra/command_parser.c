@@ -12,15 +12,16 @@ void command_parser_new(command_parser_t* parser, const char* _s) {
 	parser->argc = 0;
 
 
+	char* end = parser->original_string + strlen(_s);
 	char* ptr = parser->original_string;
 	// Count arguments
-	while(*ptr++ == ' ')
-		;
+ 	while(ptr != end && *ptr == ' ') {
+		ptr++;
+ 	}
+	
 	while(*ptr++) {
 		if(*ptr == ' ' || *ptr == 0) {
-			if(parser->original_string != ptr - 1) {
-				parser->argc++;
-			}
+			parser->argc++;
 
 			while(*ptr++ == ' ')
 				;
@@ -37,10 +38,11 @@ void command_parser_new(command_parser_t* parser, const char* _s) {
 	size_t cur = 0;
 
 	// Parse
-	while(*ptr++ == ' ')
-		;
-
-	prev = ptr - 1;
+	while(ptr != end && *ptr == ' ') {
+		ptr++;
+	}
+	
+	prev = ptr;
 	while(*ptr++) {
 		if(*ptr == ' ' || *ptr == 0) {
 			size_t len = ptr - prev;

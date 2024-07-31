@@ -656,6 +656,10 @@ void cli_handler(const char* ncmd){
 
 	command_parser_new(&parser, ncmd);
 
+	if(parser.argc == 0) {
+		qemu_err("WHAT?");
+	}
+
 	for(size_t i = 0; i < parser.argc; i++){
 		qemu_log("[CLI] '%s' => argc: %d => argv: %s", ncmd, i, parser.argv[i]);
     	}

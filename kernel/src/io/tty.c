@@ -43,6 +43,22 @@ uint32_t tty_color_table[128] = {
         [37] = 0x808000, // Gray,
 };
 
+bool tty_cursor_status = false;   // Not shown
+
+void tty_cursor_task() {
+	while(1) {
+		tty_cursor_status = !tty_cursor_status;
+		if(tty_cursor_status) {
+			draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0x404040);
+		} else {
+			draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0);
+		}
+
+		punch();
+		sleep_ms(500);
+	}
+}
+
 void tty_init(void) {
     tty_current_width = getScreenWidth() / 8;
     tty_current_height = getScreenHeight() / 16;
@@ -51,6 +67,8 @@ void tty_init(void) {
 
     tty_reset_position();
     tty_build_buffers();
+
+    thread_create(get_current_proc(), tty_cursor_task, 0x1000, true, false);
 }
 
 void tty_reset_position() {
@@ -117,6 +135,11 @@ void _tty_putc(int c) {
     } else if(c == '\r') {
 	tty_current_column = 0;
 	return;
+    } else if(c == '\b') {
+	if(tty_current_column > 0) {
+		tty_current_column--;
+	}
+	return;
     }
 
     tty_character_buffer[tty_current_row * tty_current_width + tty_current_column] = c;
@@ -130,7 +153,6 @@ void tty_putc(int c) {
     tty_render();
 }
 
-
 void tty_render() {
     size_t color = 0;
 
@@ -142,7 +164,6 @@ void tty_render() {
 
         if(tty_attributes_buffer[i] & TTY_ATTRIBUTE_COLOR) {
             color = tty_attributes_buffer[i] & 0xffffff;
-            //qemu_note("COLOR: %x", tty_current_color);
         } else {
 		color = 0xffffff;
 	}
@@ -181,11 +202,6 @@ void _tty_puts(const char *str) {
                     attr |= tty_color_table[code];
                 }
 
-                /*attr |= TTY_ATTRIBUTE_COLOR;
-
-                tty_attributes_buffer[tty_current_row * tty_current_width + tty_current_column] = attr;
-                qemu_log("Wrote attribute at index %d", tty_current_row * tty_current_width + tty_current_column);
-            	*/
 		tty_current_color = attr;
 		}
         } else {
