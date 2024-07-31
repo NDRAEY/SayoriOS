@@ -30,6 +30,7 @@
 #include "../../include/lib/fileio.h"
 #include "sys/system.h"
 #include "debug/hexview.h"
+#include "lib/command_parser.h"
 
 int G_CLI_CURINXA = 0;
 int G_CLI_CURINXB = 0;
@@ -287,7 +288,7 @@ uint32_t CLI_CMD_SET(uint32_t c, char* v[]){
 }
 
 uint32_t CLI_CMD_DIR(uint32_t c, char* v[]) {
-    const char* path = (c <= 1 ? G_CLI_PATH : v[1]);
+    const char* path = (c == 1 ? G_CLI_PATH : v[1]);
 
 	FSM_DIR* Dir = nvfs_dir(path);
 	if (Dir->Ready != 1){
@@ -374,7 +375,7 @@ uint32_t CLI_CMD_ECHO(uint32_t c, char* v[]){
 			_tty_printf("%s",G_CLI_PATH);
 		} else if (strcmpn(v[i],"%RANDOM%") || strcmpn(v[i],"%random%")){
 			/// Магии не будет - я хз как у нас тут работает рандом
-			_tty_printf("%d",1);
+			_tty_printf("%u", rand());
 		} else if (strcmpn(v[i],"%TIME%") || strcmpn(v[i],"%time%")){
 			_tty_printf("%s","12:34");
 		} else {
@@ -413,11 +414,11 @@ uint32_t pci_print_list(uint32_t argc, char* argv[]);
 uint32_t rust_command(uint32_t argc, char* argv[]);
 uint32_t CLI_MEMINFO(uint32_t argc, char* argv[]) {
 	tty_printf("Физическая:\n");
-	tty_printf("    Используется: %d байт (%d MB)\n", used_phys_memory_size, used_phys_memory_size / MB);
-	tty_printf("    Свободно: %d байт (%d MB)\n",  phys_memory_size - used_phys_memory_size, (phys_memory_size - used_phys_memory_size) / MB);
+	tty_printf("    Используется: %u байт (%u MB)\n", used_phys_memory_size, used_phys_memory_size / MB);
+	tty_printf("    Свободно: %u байт (%u MB)\n",  phys_memory_size - used_phys_memory_size, (phys_memory_size - used_phys_memory_size) / MB);
 	tty_printf("Виртуальная:\n");
-	tty_printf("    %d записей\n", system_heap.allocated_count);
-	tty_printf("    Используется: %d байт (%d MB)\n", system_heap.used_memory, system_heap.used_memory / MB);
+	tty_printf("    %u записей\n", system_heap.allocated_count);
+	tty_printf("    Используется: %u байт (%u MB)\n", system_heap.used_memory, system_heap.used_memory / MB);
 
 	return 0;
 }
@@ -444,7 +445,10 @@ uint32_t proc_list(uint32_t argc, char* argv[]) {
     for(int j = 0; j < thread_list.count; j++) {
         thread_t* thread = (thread_t*)item_thread;
 
-        tty_printf("    Поток: %d [Стек: (%x, %x, %d)]\n", thread->id, thread->stack_top, thread->stack, thread->stack_size);
+        tty_printf("    Поток: #%u процесса #%u; Стек: (%x, %x, %d); Состояние: %s\n",
+                   thread->id, thread->process->pid, thread->stack_top, thread->stack, thread->stack_size,
+                   thread_state_string(thread->state)
+                   );
 
         item_thread = item_thread->next;
     }
@@ -456,6 +460,54 @@ uint32_t CLI_CMD_REBOOT(uint32_t argc, char* argv[]) {
     reboot();
 
     return 0;
+}
+
+
+uint32_t CLI_SPAWN(uint32_t argc, char* argv[]) {
+    qemu_log("SPAWN! %u", argc);
+    if (argc <= 1) {
+        //tty_setcolor(COLOR_ERROR);
+        tty_printf("Файл не указан.\n");
+        return 1;
+    }
+
+    const char* path = argv[1];
+
+    FILE* elf_exec = fopen(path, "r");
+
+    if(!elf_exec) {
+        fclose(elf_exec);
+        tty_error("\"%s\" не является внутренней или внешней\n командой, исполняемой программой или пакетным файлом.\n", path);
+        return 2;
+    }
+
+    if(!is_elf_file(elf_exec)) {
+        fclose(elf_exec);
+        tty_printf("\"%s\" не является программой или данный тип файла не поддерживается.\n", path);
+        return 2;
+    }
+
+    fclose(elf_exec);
+
+    spawn(path, argc, argv);
+
+    return 0;
+}
+
+uint32_t CLI_SPAWN_TEST(uint32_t argc, char* argv[]) {
+    char* cmdline[] = {"hello"};
+
+    spawn("R:\\prog", 0, cmdline);
+    sleep_ms(1000);
+    spawn("R:\\hellors", 0, cmdline);
+
+    return 0;
+}
+
+uint32_t CLI_CMD_MTRR(uint32_t argc, char* argv[]) {
+	list_mtrrs();
+
+	return 0;
 }
 
 uint32_t CLI_RD(uint32_t argc, char* argv[]) {
@@ -485,6 +537,75 @@ uint32_t CLI_RD(uint32_t argc, char* argv[]) {
     return 0;
 }
 
+uint32_t CLI_CMD_HEX(uint32_t argc, char** argv) {
+	if(argc < 2) {
+		tty_printf("No arguments\n");
+		return 1;
+	}
+
+	char* file = argv[1];
+
+	FILE* fp = fopen(file, "rb");
+
+	if(!fp) {
+		tty_error("Failed to open file: %s\n", file);
+		return 1;
+	}
+
+	size_t sz = fsize(fp);
+
+	char* data = kcalloc(512, 1);
+
+	fread(fp, 512, 1, data);
+
+	tty_printf("Showing first 512 bytes:\n");
+
+	hexview_advanced(data, 512, 26, true, _tty_printf);
+	
+	kfree(data);
+	fclose(fp);
+
+	return 0;
+}
+
+uint32_t CLI_PLAIN(uint32_t argc, char** argv) {
+	if(argc < 3) {
+		tty_error("plain <address> <file>");
+		tty_printf("Note: Address must be in HEX without 0x prefix! Example: CAFEBABE");
+		return 1;
+	}
+
+	size_t address = htoi(argv[1]);
+
+	qemu_note("Address is: %x", address);
+
+	FILE* file = fopen(argv[2], "rb");
+
+	size_t filesize = fsize(file);
+
+	qemu_note("File size is: %d", filesize);
+
+	void* a = kmalloc_common(ALIGN(filesize, PAGE_SIZE), PAGE_SIZE);
+	memset(a, 0, ALIGN(filesize, PAGE_SIZE));
+
+	size_t a_phys = virt2phys(get_kernel_page_directory(), (virtual_addr_t)a);
+
+	map_pages(get_kernel_page_directory(), (physical_addr_t)a_phys, address, ALIGN(filesize, PAGE_SIZE), PAGE_WRITEABLE);
+
+	fread(file, 1, filesize, (void*)a);
+
+	int (*entry)(int, char**) = (int(*)(int, char**))address;
+
+	qemu_log("RESULT IS: %d", entry(0, 0));
+
+	unmap_pages_overlapping(get_kernel_page_directory(), address, filesize);
+
+	kfree(a);
+	fclose(file);
+
+	return 0;
+}
+
 uint32_t pavi_view(uint32_t, char**);
 uint32_t minesweeper(uint32_t, char**);
 uint32_t shell_diskctl(uint32_t, char**);
@@ -508,6 +629,7 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
 	{"DESKTOP", "desktop", parallel_desktop_start, "Рабочий стол"},
 	{"MALA", "mala", mala_draw, "Нарисовать рисунок"},
     {"MINESWEEPER", "minesweeper", minesweeper, "Сапёр"},
+    {"MTRR", "mtrr", CLI_CMD_MTRR, "MTRR"},
 	{"PAVI", "pavi", pavi_view, "Программа для просмотра изображений"},
 	{"PCI", "pci", pci_print_list, "Список PCI устройств"},
 	// {"RS", "rs", rust_command, "Rust command"},
@@ -520,35 +642,41 @@ CLI_CMD_ELEM G_CLI_CMD[] = {
     {"RMDIR", "rmdir", CLI_CMD_RMDIR, "Удалить папку"},
     {"REBOOT", "reboot", CLI_CMD_REBOOT, "Перезагрузка"},
     {"RD", "rd", CLI_RD, "Чтение данных с диска"},
+    {"SPAWN", "spawn", CLI_SPAWN, "spawn a new process"},
+    {"PLAIN", "plain", CLI_PLAIN, "Run plain program"},
+    {"HEX", "hex", CLI_CMD_HEX, "Show hex data"},
+    {"ST", "st", CLI_SPAWN_TEST, "spawn test"},
 	{nullptr, nullptr, nullptr}
 };
 
 void cli_handler(const char* ncmd){
 //	set_cursor_enabled(0);
 
-	uint32_t argc = str_cdsp(ncmd," ") + 1;
-    char* argv[128] = {0};
+	command_parser_t parser = {};
 
-    str_split(ncmd, argv, " ");
+	command_parser_new(&parser, ncmd);
 
-	for(size_t i = 0; i < argc; i++){
-		qemu_log("[CLI] '%s' => argc: %d => argv: %s", ncmd, i, argv[i]);
-    }
+	for(size_t i = 0; i < parser.argc; i++){
+		qemu_log("[CLI] '%s' => argc: %d => argv: %s", ncmd, i, parser.argv[i]);
+    	}
 
 	bool found = false;
 
 	for(size_t i = 0; G_CLI_CMD[i].name != nullptr; i++) {
-		if(strcmpn(G_CLI_CMD[i].name, argv[0]) || strcmpn(G_CLI_CMD[i].alias, argv[0])) {
-			G_CLI_CMD[i].funcv(argc, argv);
+		if(strcmpn(G_CLI_CMD[i].name, parser.argv[0]) || strcmpn(G_CLI_CMD[i].alias, parser.argv[0])) {
+			G_CLI_CMD[i].funcv(parser.argc, parser.argv);
 			found = true;
 			break;
 		}
 	}
+	
 	if(!found) {
-		CLI_CMD_RUN(argc + 1, argv);
+		CLI_CMD_RUN(parser.argc, parser.argv);
 	}
 
-//	set_cursor_enabled(1);
+	command_parser_destroy(&parser);
+
+	//set_cursor_enabled(1);
 }
 
 void cli(){
@@ -569,28 +697,28 @@ void cli(){
 
 	punch();
 
-	char* input_buffer = kcalloc(1, 256);
+	char* input_buffer = kcalloc(1, 512);
 	while(1) {
 		size_t memory_cur = system_heap.used_memory;
-        size_t memory_cnt_cur = system_heap.allocated_count;
+        	size_t memory_cnt_cur = system_heap.allocated_count;
 
     	tty_set_color(0xFFFFFF);
 		tty_printf("%s>", G_CLI_PATH);
-		memset(input_buffer, 0, 256);
+		memset(input_buffer, 0, 512);
 
-        int result = gets_max(input_buffer, 255);
+		int result = gets_max(input_buffer, 512);
 
-        if(result == 1) {
-            tty_alert("\nMaximum 255 characters!\n");
-            continue;
-        }
+        	if(result == 1) {
+            		tty_alert("\nMaximum 512 characters!\n");
+            		continue;
+        	}
 
-        size_t len_cmd = strlen(input_buffer);
-        if (len_cmd == 0) {
-            continue;
-        }
+        	size_t len_cmd = strlen(input_buffer);
+        	if (len_cmd == 0) {
+            		continue;
+		}
 
-        size_t current_time = timestamp();
+        	size_t current_time = timestamp();
 		qemu_log("cmd: %s", input_buffer);
 
 		cli_handler(input_buffer);
@@ -608,7 +736,7 @@ void cli(){
 			qemu_ok("All right! No memory leaks! Keep it up, buddy!");
 		}
 
-        qemu_note("Time elapsed: %d milliseconds", timestamp() - current_time);
+		qemu_note("Time elapsed: %d milliseconds", timestamp() - current_time);
 	}
 
     kfree(input_buffer);

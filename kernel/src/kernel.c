@@ -449,13 +449,17 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     igfx_init();
 
 //    hda_init();
-	void k();
+	// void k();
 
-	// create_process(k, "process", false, true);
+//	 create_process(k, "process", false, true);
+//    sleep_ms(500);
+//    create_process(k, "process2", false, true);
+//    sleep_ms(1500);
+//    create_process(k, "process3", false, true);
 
     qemu_log("System initialized everything at: %f seconds.", (double) (getTicks() - kernel_start_time) / getFrequency());
 
-    tty_printf("\033[31mWHAT THE FUCK\033[0m\nHAHHAHA\n");
+    tty_printf("\033[31mWHAT THE FUCK\033[0m\nHAHHAHA\rBOO\n\033[33mHello\033[0m\n");
 
     cli();
 
@@ -464,8 +468,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
 }
 
 // void k() {
-// 	for(int i = 0; i < 10; i++) {
-// 		qemu_err("HELLO");
-// 		sleep_ms(250);
-// 	}
+//     for(int i = 0; i < 10; i++) {
+//         qemu_err("HELLO");
+//         sleep_ms(250);
+//     }
 // }

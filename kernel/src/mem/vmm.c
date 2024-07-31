@@ -172,24 +172,28 @@ void* kmalloc_common(size_t size, size_t align) {
 										   reg_addr); // is allocated region there?
 
 		if (!region) {
-            if(vmm_debug)
-    			qemu_warn("Region is not yet mapped: %x", reg_addr);
+            if(vmm_debug) {
+                qemu_warn("Region is not yet mapped: %x", reg_addr);
+            }
 
-			size_t page = phys_alloc_single_page();
+            size_t page = phys_alloc_single_page();
 
-            if(vmm_debug)
+            if(vmm_debug) {
                 qemu_log("Obtained new page: %x", page);
+            }
 
-			map_single_page(get_kernel_page_directory(),
+            map_single_page(get_kernel_page_directory(),
 							page,
 							reg_addr,
 							PAGE_WRITEABLE);
 
-            if(vmm_debug)
-    			qemu_ok("Mapped!");
+            if(vmm_debug) {
+                qemu_ok("Mapped!");
+            }
 		} else {
-            if(vmm_debug)
+            if(vmm_debug) {
                 qemu_warn("Already mapped: %x (Size: %d)", reg_addr, size);
+            }
 		}
 
 		reg_addr += PAGE_SIZE;
@@ -256,7 +260,7 @@ void kfree(void* ptr) {
 	struct heap_entry block = heap_get_block((size_t)ptr);
 
     if(vmm_debug)
-        qemu_warn("Freeing %x", (size_t)ptr);
+        qemu_printf("Freeing %x\n", (size_t)ptr);
 
 	if(!block.address) {
 		qemu_warn("No block!");
@@ -398,6 +402,8 @@ void* krealloc(void* ptr, size_t memory_size) {
  */
 void* clone_kernel_page_directory(size_t virts_out[1024]) {
 	uint32_t* page_dir = kmalloc_common(PAGE_SIZE, PAGE_SIZE);
+    memset(page_dir, 0, PAGE_SIZE);
+
     uint32_t physaddr = virt2phys(get_kernel_page_directory(), (virtual_addr_t) page_dir);
 
     const uint32_t* kern_dir = get_kernel_page_directory();
