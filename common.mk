@@ -169,6 +169,7 @@ SOURCES=\
 	kernel/src/drv/ps2.c \
 	kernel/src/drv/video/intel.c \
 	kernel/src/extra/command_parser.c \
+	kernel/src/drv/network/e1000.c \
 	kernel/src/kernel.c \
 #	kernel/src/lib/duktape.c \
 	kernel/src/toys/piano.c \
@@ -248,7 +249,7 @@ QEMU_BASE_FLAGS = -cdrom kernel.iso \
 QEMU_FLAGS = $(QEMU_BASE_FLAGS) \
 			 -audiodev pa,id=pa0 \
 			 -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128,hostfwd=tcp::9999-:9999 \
-			 -device rtl8139,netdev=net0,id=mydev0 \
+			 -device e1000,netdev=net0,id=mydev0 \
 			 -M pcspk-audiodev=pa0 \
 			 -device ich9-intel-hda,debug=0 \
 			 -device hda-output,audiodev=pa0 \
@@ -264,7 +265,7 @@ QEMU_FLAGS = $(QEMU_BASE_FLAGS) \
 # NOTE: -d int works only when using tcg accelerator (no KVM)
 QEMU_FLAGS_WSL = $(QEMU_BASE_FLAGS) \
 			 -netdev user,id=net0,net=192.168.111.0,dhcpstart=192.168.111.128 \
-			 -device rtl8139,netdev=net0,id=mydev0 \
+			 -device e1000,netdev=net0,id=mydev0 \
 			 -device AC97 \
 			 -boot d \
 			 -cpu core2duo-v1

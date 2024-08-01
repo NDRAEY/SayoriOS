@@ -356,7 +356,8 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     arp_init();
 //    bootScreenPaint("Инициализация RTL8139...");
     rtl8139_init();
-//    bootScreenPaint("Инициализация DHCP...");
+	e1000_init();
+    //    bootScreenPaint("Инициализация DHCP...");
     dhcp_init_all_cards();
 //    bootScreenPaint("Готово...");
 //    bootScreenClose(0x000000, 0xFFFFFF);
@@ -444,7 +445,7 @@ void  __attribute__((noreturn)) kmain(multiboot_header_t* mboot, uint32_t initia
     /// Обновим данные обо всех дисках
     fsm_dpm_update(-1);
 
-    // vio_ntw_init();
+    // vio_ntw_init
 
     igfx_init();
 
