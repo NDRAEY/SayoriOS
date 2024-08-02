@@ -44,15 +44,22 @@ uint32_t tty_color_table[128] = {
 };
 
 bool tty_cursor_status = false;   // Not shown
+bool tty_cursor_enable = true;
+
+void tty_draw_cursor() {
+	if(tty_cursor_status && tty_cursor_enable) {
+		draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0x404040);
+	} else {
+		draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0);
+	}
+}
 
 void tty_cursor_task() {
 	while(1) {
-		tty_cursor_status = !tty_cursor_status;
-		if(tty_cursor_status) {
-			draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0x404040);
-		} else {
-			draw_filled_rectangle(tty_current_column * 8, tty_current_row * 16 + 12, 8, 4, 0);
+		if(tty_cursor_enable) {
+			tty_cursor_status = !tty_cursor_status;
 		}
+		tty_draw_cursor();
 
 		punch();
 		sleep_ms(500);
@@ -149,8 +156,11 @@ void _tty_putc(int c) {
 }
 
 void tty_putc(int c) {
-    _tty_putc(c);
+    tty_cursor_enable = false;
+    tty_draw_cursor();
+	_tty_putc(c);
     tty_render();
+    tty_cursor_enable = true;
 }
 
 void tty_render() {
@@ -223,8 +233,13 @@ void _tty_puts(const char *str) {
 }
 
 void tty_puts(const char *str) {
+    tty_cursor_enable = false;
+    tty_draw_cursor();
+	
     _tty_puts(str);
     tty_render();
+
+	tty_cursor_enable = true;
 }
 
 void _tty_vprintf(const char* format, va_list args) {
